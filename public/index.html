@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=your_google_api_key_here&libraries=places"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .card-shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-building text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Property Intelligence</h1>
+                        <p class="text-sm text-purple-200">LoopNet • Crexi • Zoneomics • AI</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-purple-200">Demo Dashboard</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg card-shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-search text-purple-600 mr-2"></i>Search Property
+                </h2>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <input
+                            type="text"
+                            id="addressInput"
+                            placeholder="Enter address (e.g., 4706 New Horizons Blvd Appleton, WI 54914)"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                            onkeypress="if(event.key === 'Enter') searchProperty()"
+                        >
+                    </div>
+                    <button
+                        onclick="searchProperty()"
+                        class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-200 flex items-center space-x-2"
+                    >
+                        <i class="fas fa-search"></i>
+                        <span>Search</span>
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="hidden mt-6 text-center">
+                    <div class="spinner mx-auto"></div>
+                    <p class="text-gray-600 mt-4">Loading property data...</p>
+                    <p class="text-sm text-gray-500 mt-2">Fetching data from multiple sources</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="hidden mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-3"></i>
+                        <div>
+                            <h3 class="text-red-800 font-semibold">Error</h3>
+                            <p id="errorMessage" class="text-red-600 text-sm mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="container mx-auto px-4 pb-12 hidden">
+
+        <!-- Zoning Information -->
+        <div class="mb-6 fade-in">
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-map-marked-alt text-purple-600 mr-2"></i>
+                    Zoning Information
+                </h3>
+                <div id="zoningDetails">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Address & Map -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in">
+            <!-- Validated Address with Street View -->
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>
+                    Validated Address
+                </h3>
+                <div id="addressDetails" class="space-y-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Google Map -->
+            <div class="bg-white rounded-lg card-shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-map text-purple-600 mr-2"></i>
+                    Map View
+                </h3>
+                <div id="mapContainer" style="height: 450px; border-radius: 8px;">
+                    <!-- Map populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 fade-in">
+            <div class="bg-white rounded-lg card-shadow p-6 metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">AVM Value</p>
+                        <p id="avmValue" class="text-2xl font-bold text-gray-800 mt-1">--</p>
+                    </div>
+                    <div class="bg-green-100 rounded-full p-3">
+                        <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg card-shadow p-6 metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">Tax Assessment</p>
+                        <p id="taxValue" class="text-2xl font-bold text-gray-800 mt-1">--</p>
+                    </div>
+                    <div class="bg-blue-100 rounded-full p-3">
+                        <i class="fas fa-file-invoice-dollar text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg card-shadow p-6 metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">Zone Type</p>
+                        <p id="zoneType" class="text-2xl font-bold text-gray-800 mt-1">--</p>
+                    </div>
+                    <div class="bg-purple-100 rounded-full p-3">
+                        <i class="fas fa-map text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg card-shadow p-6 metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">Property Type</p>
+                        <p id="propertyType" class="text-2xl font-bold text-gray-800 mt-1">--</p>
+                    </div>
+                    <div class="bg-yellow-100 rounded-full p-3">
+                        <i class="fas fa-home text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Information Tabs -->
+        <div class="bg-white rounded-lg card-shadow fade-in">
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-4 px-6" aria-label="Tabs">
+                    <button onclick="switchTab('property')" id="tab-property" class="tab-button active border-b-2 border-purple-600 py-4 px-1 text-sm font-medium text-purple-600">
+                        <i class="fas fa-info-circle mr-2"></i>Property Details
+                    </button>
+                    <button onclick="switchTab('valuation')" id="tab-valuation" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i class="fas fa-chart-line mr-2"></i>Valuation
+                    </button>
+                    <button onclick="switchTab('financial')" id="tab-financial" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i class="fas fa-coins mr-2"></i>Financial
+                    </button>
+                    <button onclick="switchTab('raw')" id="tab-raw" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i class="fas fa-code mr-2"></i>Raw Data
+                    </button>
+                </nav>
+            </div>
+
+            <div class="p-6">
+                <!-- Property Details Tab -->
+                <div id="content-property" class="tab-content">
+                    <div id="propertyDetails" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Valuation Tab -->
+                <div id="content-valuation" class="tab-content hidden">
+                    <div id="valuationDetails" class="space-y-6">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Financial Tab -->
+                <div id="content-financial" class="tab-content hidden">
+                    <div id="financialDetails" class="space-y-6">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Raw Data Tab -->
+                <div id="content-raw" class="tab-content hidden">
+                    <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                        <pre id="rawDataContent" class="text-green-400 text-xs font-mono"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
