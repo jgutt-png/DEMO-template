@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
@@ -9,13 +10,13 @@ const { saveAllPropertyData, getCompletePropertyData, getSearchHistory } = requi
 const execAsync = promisify(exec);
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // API Keys
-const GOOGLE_API_KEY = 'your_google_api_key_here';
-const ZONEOMICS_API_KEY = 'your_zoneomics_api_key_here';
-const ATTOM_API_KEY = 'your_attom_api_key_here';
-const LOOPNET_API_KEY = '9e05046019mshd408c82bdc33c54p1c845fjsn997415e8f471';
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+const ZONEOMICS_API_KEY = process.env.ZONEOMICS_API_KEY;
+const ATTOM_API_KEY = process.env.ATTOM_API_KEY;
+const LOOPNET_API_KEY = process.env.LOOPNET_API_KEY;
 
 app.use(cors());
 app.use(express.json());
@@ -438,6 +439,486 @@ app.get('/api/property/search-history', async (req, res) => {
   } catch (error) {
     console.error('Search history error:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// ===== LOOPNET LISTINGS ENDPOINTS =====
+
+// Get LoopNet listings with filters and pagination
+app.get('/api/loopnet/listings', async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 20,
+      property_type,
+      city,
+      state_code,
+      price_min,
+      price_max,
+      building_size_min,
+      building_size_max,
+      lot_size_min,
+      lot_size_max,
+      sort_by = 'last_updated',
+      sort_order = 'desc',
+      search
+    } = req.query;
+
+    // Build query - join with property_listings to get coordinates
+    let query = supabase
+      .from('property_details')
+      .select(`
+        *,
+        property_listings!inner(latitude, longitude, listing_id, state_id)
+      `, { count: 'exact' });
+
+    // FILTER OUT INCOMPLETE LISTINGS - Only show properties with titles (indicates complete data)
+    query = query.not('title', 'is', null);
+
+    // Apply filters
+    if (property_type) {
+      query = query.eq('property_type', property_type);
+    }
+
+    if (city) {
+      query = query.ilike('city', `%${city}%`);
+    }
+
+    if (state_code) {
+      query = query.eq('state_code', state_code);
+    }
+
+    // Price filters (need to handle string prices)
+    if (price_min || price_max) {
+      query = query.not('price', 'is', null);
+    }
+
+    // Building size filters
+    if (building_size_min || building_size_max) {
+      query = query.not('building_size', 'is', null);
+    }
+
+    // Lot size filters
+    if (lot_size_min || lot_size_max) {
+      query = query.not('lot_size', 'is', null);
+    }
+
+    // Search in title and description
+    if (search) {
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    // Pagination
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    query = query.range(offset, offset + parseInt(limit) - 1);
+
+    // Sorting
+    const validSortFields = ['last_updated', 'price', 'building_size', 'lot_size', 'city', 'title'];
+    const sortField = validSortFields.includes(sort_by) ? sort_by : 'last_updated';
+    query = query.order(sortField, { ascending: sort_order === 'asc', nullsFirst: false });
+
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+
+    // Flatten the joined data structure
+    const flattenedData = data?.map(item => {
+      const coords = item.property_listings?.[0] || item.property_listings || {};
+      return {
+        ...item,
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        listing_id: item.listing_id || coords.listing_id,
+        state_id: item.state_id || coords.state_id,
+        property_listings: undefined // Remove the nested object
+      };
+    }) || [];
+
+    // Get unique values for filters
+    const { data: propertyTypes } = await supabase
+      .from('property_details')
+      .select('property_type')
+      .not('property_type', 'is', null);
+
+    const { data: cities } = await supabase
+      .from('property_details')
+      .select('city')
+      .not('city', 'is', null);
+
+    const { data: states } = await supabase
+      .from('property_details')
+      .select('state_code')
+      .not('state_code', 'is', null);
+
+    // Get unique values
+    const uniquePropertyTypes = [...new Set(propertyTypes?.map(p => p.property_type) || [])].sort();
+    const uniqueCities = [...new Set(cities?.map(c => c.city) || [])].sort();
+    const uniqueStates = [...new Set(states?.map(s => s.state_code) || [])].sort();
+
+    res.json({
+      success: true,
+      data: flattenedData,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: count,
+        totalPages: Math.ceil(count / parseInt(limit))
+      },
+      filters: {
+        propertyTypes: uniquePropertyTypes,
+        cities: uniqueCities,
+        states: uniqueStates
+      }
+    });
+  } catch (error) {
+    console.error('Listings error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get single listing details
+app.get('/api/loopnet/listings/:listing_id/:state_id', async (req, res) => {
+  try {
+    const { listing_id, state_id } = req.params;
+
+    const { data, error } = await supabase
+      .from('property_details')
+      .select('*')
+      .eq('listing_id', listing_id)
+      .eq('state_id', state_id)
+      .single();
+
+    if (error) throw error;
+
+    if (!data) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Listing detail error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get listing statistics
+app.get('/api/loopnet/stats', async (req, res) => {
+  try {
+    // Get total count - ONLY COMPLETE LISTINGS
+    const { count: totalListings } = await supabase
+      .from('property_details')
+      .select('*', { count: 'exact', head: true })
+      .not('title', 'is', null);
+
+    // Get count by property type - ONLY COMPLETE LISTINGS
+    const { data: byType } = await supabase
+      .from('property_details')
+      .select('property_type')
+      .not('title', 'is', null)
+      .not('property_type', 'is', null);
+
+    // Get count by city (top 10) - ONLY COMPLETE LISTINGS
+    const { data: byCity } = await supabase
+      .from('property_details')
+      .select('city')
+      .not('title', 'is', null)
+      .not('city', 'is', null);
+
+    const typeCounts = byType?.reduce((acc, item) => {
+      acc[item.property_type] = (acc[item.property_type] || 0) + 1;
+      return acc;
+    }, {});
+
+    const cityCounts = byCity?.reduce((acc, item) => {
+      acc[item.city] = (acc[item.city] || 0) + 1;
+      return acc;
+    }, {});
+
+    const topCities = Object.entries(cityCounts || {})
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([city, count]) => ({ city, count }));
+
+    res.json({
+      success: true,
+      stats: {
+        totalListings,
+        byPropertyType: typeCounts,
+        topCities
+      }
+    });
+  } catch (error) {
+    console.error('Stats error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ===== MAP-SPECIFIC ENDPOINTS =====
+
+// Get default map center (state with most listings)
+app.get('/api/loopnet/map-center', async (req, res) => {
+  try {
+    // Get all listings with coordinates from property_listings joined with property_details
+    const { data: listings } = await supabase
+      .from('property_listings')
+      .select('latitude, longitude, property_details!inner(state_code, title)')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .not('property_details.title', 'is', null);
+
+    if (!listings || listings.length === 0) {
+      // Fallback to center of USA
+      return res.json({
+        success: true,
+        center: {
+          latitude: 39.8283,
+          longitude: -98.5795,
+          zoom: 5
+        }
+      });
+    }
+
+    // Count by state and collect coordinates
+    const stateCounts = listings.reduce((acc, item) => {
+      const state_code = item.property_details?.state_code;
+      if (!state_code) return acc;
+
+      if (!acc[state_code]) {
+        acc[state_code] = [];
+      }
+      const lat = parseFloat(item.latitude);
+      const lon = parseFloat(item.longitude);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        acc[state_code].push({ lat, lon });
+      }
+      return acc;
+    }, {});
+
+    // Find state with most listings
+    const topState = Object.entries(stateCounts)
+      .sort((a, b) => b[1].length - a[1].length)[0];
+
+    if (!topState || topState[1].length === 0) {
+      return res.json({
+        success: true,
+        center: {
+          latitude: 39.8283,
+          longitude: -98.5795,
+          zoom: 5
+        }
+      });
+    }
+
+    // Calculate center of listings in top state
+    const coords = topState[1];
+    const avgLat = coords.reduce((sum, c) => sum + c.lat, 0) / coords.length;
+    const avgLon = coords.reduce((sum, c) => sum + c.lon, 0) / coords.length;
+
+    // Determine zoom level based on listing count
+    let zoom = 10;
+    if (coords.length > 100) zoom = 9;
+    else if (coords.length > 50) zoom = 10;
+    else if (coords.length > 10) zoom = 11;
+    else zoom = 12;
+
+    res.json({
+      success: true,
+      center: {
+        latitude: avgLat,
+        longitude: avgLon,
+        zoom: zoom,
+        state: topState[0],
+        state_code: topState[0],
+        count: coords.length
+      }
+    });
+
+  } catch (error) {
+    console.error('Map center error:', error);
+    res.json({
+      success: true,
+      center: {
+        latitude: 39.8283,
+        longitude: -98.5795,
+        zoom: 5
+      }
+    });
+  }
+});
+
+// Get bounds for a specific state
+app.get('/api/loopnet/state-bounds/:stateCode', async (req, res) => {
+  try {
+    const { stateCode } = req.params;
+
+    // Get all listings with coordinates for this state
+    const { data: listings } = await supabase
+      .from('property_listings')
+      .select('latitude, longitude, property_details!inner(state_code, title)')
+      .eq('property_details.state_code', stateCode)
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .not('property_details.title', 'is', null);
+
+    if (!listings || listings.length === 0) {
+      return res.json({
+        success: false,
+        error: 'No properties found for this state'
+      });
+    }
+
+    // Calculate bounds
+    const lats = listings.map(l => parseFloat(l.latitude)).filter(l => !isNaN(l));
+    const lons = listings.map(l => parseFloat(l.longitude)).filter(l => !isNaN(l));
+
+    const north = Math.max(...lats);
+    const south = Math.min(...lats);
+    const east = Math.max(...lons);
+    const west = Math.min(...lons);
+
+    const centerLat = (north + south) / 2;
+    const centerLon = (east + west) / 2;
+
+    // Calculate zoom level based on bounds
+    const latDiff = north - south;
+    const lonDiff = east - west;
+    const maxDiff = Math.max(latDiff, lonDiff);
+
+    let zoom = 10;
+    if (maxDiff > 10) zoom = 6;
+    else if (maxDiff > 5) zoom = 7;
+    else if (maxDiff > 2) zoom = 8;
+    else if (maxDiff > 1) zoom = 9;
+    else if (maxDiff > 0.5) zoom = 10;
+    else zoom = 11;
+
+    res.json({
+      success: true,
+      bounds: {
+        north,
+        south,
+        east,
+        west,
+        center: {
+          latitude: centerLat,
+          longitude: centerLon
+        },
+        zoom,
+        count: listings.length,
+        state_code: stateCode
+      }
+    });
+
+  } catch (error) {
+    console.error('State bounds error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get listings within bounding box
+app.get('/api/loopnet/listings/bounds', async (req, res) => {
+  try {
+    const {
+      north,
+      south,
+      east,
+      west,
+      limit = 1000
+    } = req.query;
+
+    if (!north || !south || !east || !west) {
+      return res.status(400).json({
+        success: false,
+        error: 'Bounding box coordinates required (north, south, east, west)'
+      });
+    }
+
+    // Query listings within bounds
+    const { data, error } = await supabase
+      .from('property_details')
+      .select('*')
+      .not('title', 'is', null)
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .gte('latitude', parseFloat(south))
+      .lte('latitude', parseFloat(north))
+      .gte('longitude', parseFloat(west))
+      .lte('longitude', parseFloat(east))
+      .limit(parseInt(limit));
+
+    if (error) throw error;
+
+    res.json({
+      success: true,
+      data,
+      count: data ? data.length : 0,
+      bounds: { north, south, east, west }
+    });
+
+  } catch (error) {
+    console.error('Bounds query error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Get coordinate statistics
+app.get('/api/loopnet/coordinates/stats', async (req, res) => {
+  try {
+    // Total listings with coordinates
+    const { count: withCoords } = await supabase
+      .from('property_details')
+      .select('*', { count: 'exact', head: true })
+      .not('title', 'is', null)
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null);
+
+    // Total listings
+    const { count: totalCount } = await supabase
+      .from('property_details')
+      .select('*', { count: 'exact', head: true })
+      .not('title', 'is', null);
+
+    const withoutCoords = totalCount - withCoords;
+
+    // Get coordinate range (sample)
+    const { data: coordRanges } = await supabase
+      .from('property_details')
+      .select('latitude, longitude')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .limit(1000);
+
+    let bounds = null;
+    if (coordRanges && coordRanges.length > 0) {
+      const lats = coordRanges.map(c => parseFloat(c.latitude)).filter(n => !isNaN(n));
+      const lons = coordRanges.map(c => parseFloat(c.longitude)).filter(n => !isNaN(n));
+      if (lats.length > 0 && lons.length > 0) {
+        bounds = {
+          north: Math.max(...lats),
+          south: Math.min(...lats),
+          east: Math.max(...lons),
+          west: Math.min(...lons)
+        };
+      }
+    }
+
+    res.json({
+      success: true,
+      stats: {
+        withCoordinates: withCoords || 0,
+        withoutCoordinates: withoutCoords || 0,
+        total: totalCount || 0,
+        percentageWithCoords: totalCount > 0 ? ((withCoords / totalCount) * 100).toFixed(2) : '0.00',
+        bounds
+      }
+    });
+
+  } catch (error) {
+    console.error('Coordinate stats error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 

@@ -4,7 +4,7 @@ const path = require('path');
 
 // Supabase configuration
 const SUPABASE_URL = 'https://your_supabase_project_ref_here.supabase.co';
-const SUPABASE_KEY = 'your_supabase_key_here';
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 async function setupDatabase() {
     console.log('Setting up Supabase database...');

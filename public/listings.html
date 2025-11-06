@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial Property Listings - LoopNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet Map Dependencies -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="listings-style.css">
+    <link rel="stylesheet" href="map-styles.css">
+</head>
+<body class="h-full">
+    <div>
+        <!-- Mobile sidebar overlay -->
+        <div id="mobile-sidebar-overlay" class="hidden fixed inset-0 bg-gray-900/80 z-40 lg:hidden" onclick="toggleMobileSidebar()"></div>
+
+        <!-- Mobile sidebar -->
+        <div id="mobile-sidebar" class="hidden fixed inset-y-0 left-0 z-50 w-[248px] bg-white transform -translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+            <div class="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-2">
+                <div class="flex h-16 shrink-0 items-center">
+                    <i class="fas fa-building text-indigo-600 text-2xl"></i>
+                    <span class="ml-3 text-lg font-bold text-gray-900">Property Intel</span>
+                </div>
+                <nav class="flex flex-1 flex-col">
+                    <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                        <li>
+                            <ul role="list" class="-mx-2 space-y-1">
+                                <li>
+                                    <a href="/" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-search text-gray-400 w-6"></i>
+                                        Property Search
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/listings.html" class="bg-gray-50 text-indigo-600 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-list text-indigo-600 w-6"></i>
+                                        Commercial Listings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-history text-gray-400 w-6"></i>
+                                        Search History
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-chart-line text-gray-400 w-6"></i>
+                                        Analytics
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-map-marked-alt text-gray-400 w-6"></i>
+                                        Zoning Maps
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="text-xs font-semibold text-gray-400">Data Sources</div>
+                            <ul role="list" class="-mx-2 mt-2 space-y-1">
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400">
+                                            L
+                                        </span>
+                                        <span class="truncate">LoopNet</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400">
+                                            Z
+                                        </span>
+                                        <span class="truncate">Zoneomics</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400">
+                                            A
+                                        </span>
+                                        <span class="truncate">ATTOM Data</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Static sidebar for desktop -->
+        <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-[248px] lg:flex-col">
+            <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
+                <div class="flex h-16 shrink-0 items-center">
+                    <i class="fas fa-building text-indigo-600 text-2xl"></i>
+                    <span class="ml-3 text-lg font-bold text-gray-900">Property Intel</span>
+                </div>
+                <nav class="flex flex-1 flex-col">
+                    <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                        <li>
+                            <ul role="list" class="-mx-2 space-y-1">
+                                <li>
+                                    <a href="/" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-search text-gray-400 w-6"></i>
+                                        Property Search
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/listings.html" class="bg-gray-50 text-indigo-600 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-list text-indigo-600 w-6"></i>
+                                        Commercial Listings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-history text-gray-400 w-6"></i>
+                                        Search History
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-chart-line text-gray-400 w-6"></i>
+                                        Analytics
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <i class="fas fa-map-marked-alt text-gray-400 w-6"></i>
+                                        Zoning Maps
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="text-xs font-semibold text-gray-400">Data Sources</div>
+                            <ul role="list" class="-mx-2 mt-2 space-y-1">
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400">
+                                            L
+                                        </span>
+                                        <span class="truncate">LoopNet</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400">
+                                            Z
+                                        </span>
+                                        <span class="truncate">Zoneomics</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="text-gray-700 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400">
+                                            A
+                                        </span>
+                                        <span class="truncate">ATTOM Data</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="-mx-6 mt-auto relative">
+                            <!-- Settings Dropdown -->
+                            <div id="settings-dropdown" class="hidden absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                                <div class="p-4">
+                                    <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
+                                        <h3 class="text-sm font-semibold text-gray-900">
+                                            <i class="fas fa-cog text-indigo-600 mr-2"></i>Settings
+                                        </h3>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <a href="#" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                                            <i class="fas fa-user-circle text-gray-400 mr-2 w-4"></i>Profile
+                                        </a>
+                                        <a href="#" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                                            <i class="fas fa-palette text-gray-400 mr-2 w-4"></i>Appearance
+                                        </a>
+                                        <a href="#" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                                            <i class="fas fa-bell text-gray-400 mr-2 w-4"></i>Notifications
+                                        </a>
+                                        <a href="#" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                                            <i class="fas fa-shield-alt text-gray-400 mr-2 w-4"></i>Privacy
+                                        </a>
+                                        <div class="border-t border-gray-200 my-2"></div>
+                                        <a href="#" class="block px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md">
+                                            <i class="fas fa-sign-out-alt text-red-600 mr-2 w-4"></i>Sign Out
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" onclick="toggleSettings(); return false;" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer">
+                                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
+                                    <i class="fas fa-user text-sm"></i>
+                                </div>
+                                <span class="sr-only">Your profile</span>
+                                <span aria-hidden="true">Demo User</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Mobile top bar -->
+        <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+            <button type="button" onclick="toggleMobileSidebar()" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
+                <span class="sr-only">Open sidebar</span>
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex-1 text-sm font-semibold text-gray-900">Commercial Listings</div>
+            <div class="text-sm text-gray-500">
+                <span class="stat-item" id="total-listings-mobile">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <main class="lg:pl-[248px]">
+            <!-- Filters as Header -->
+            <header class="filters-header-bar">
+                <div class="filters-header-container">
+                    <!-- Primary filters -->
+                    <div class="filters-header-primary">
+                        <div class="filter-inline">
+                            <input type="text" id="search-input"
+                                   placeholder="Search properties..."
+                                   class="filter-input-inline">
+                        </div>
+                        <div class="filter-inline">
+                            <select id="property-type" class="filter-select-inline">
+                                <option value="">All Types</option>
+                            </select>
+                        </div>
+                        <div class="filter-inline">
+                            <select id="city" class="filter-select-inline">
+                                <option value="">All Cities</option>
+                            </select>
+                        </div>
+                        <div class="filter-inline">
+                            <select id="state" class="filter-select-inline">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Secondary filters -->
+                    <div class="filters-header-secondary">
+                        <button class="btn-secondary btn-small" id="toggle-advanced-filters">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 5h10M3 10h6M3 15h8"/>
+                            </svg>
+                            More Filters
+                        </button>
+                        <div class="header-stats-inline">
+                            <span class="stat-item" id="total-listings">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters Panel -->
+                <div class="filters-advanced-panel" id="advanced-filters" style="display: none;">
+                    <div class="filters-advanced-grid">
+                        <!-- Price Range -->
+                        <div class="filter-group-inline">
+                            <label>Price Range</label>
+                            <div class="range-inputs-inline">
+                                <input type="number" id="price-min" placeholder="Min" class="filter-input-small">
+                                <span>-</span>
+                                <input type="number" id="price-max" placeholder="Max" class="filter-input-small">
+                            </div>
+                        </div>
+
+                        <!-- Building Size -->
+                        <div class="filter-group-inline">
+                            <label>Building Size (SF)</label>
+                            <div class="range-inputs-inline">
+                                <input type="number" id="building-size-min" placeholder="Min" class="filter-input-small">
+                                <span>-</span>
+                                <input type="number" id="building-size-max" placeholder="Max" class="filter-input-small">
+                            </div>
+                        </div>
+
+                        <!-- Lot Size -->
+                        <div class="filter-group-inline">
+                            <label>Lot Size (SF)</label>
+                            <div class="range-inputs-inline">
+                                <input type="number" id="lot-size-min" placeholder="Min" class="filter-input-small">
+                                <span>-</span>
+                                <input type="number" id="lot-size-max" placeholder="Max" class="filter-input-small">
+                            </div>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="filter-group-inline">
+                            <label>Sort By</label>
+                            <select id="sort-by" class="filter-select">
+                                <option value="last_updated">Last Updated</option>
+                                <option value="price">Price</option>
+                                <option value="building_size">Building Size</option>
+                                <option value="lot_size">Lot Size</option>
+                                <option value="city">City</option>
+                                <option value="title">Title</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort Order -->
+                        <div class="filter-group-inline">
+                            <label>Order</label>
+                            <select id="sort-order" class="filter-select">
+                                <option value="desc">Descending</option>
+                                <option value="asc">Ascending</option>
+                            </select>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="filter-actions">
+                            <button class="btn-primary btn-small" id="apply-filters">Apply</button>
+                            <button class="btn-secondary btn-small" id="clear-filters">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="main-content">
+                <!-- Split Screen Container -->
+                <div class="split-screen-container">
+
+                    <!-- LEFT: Map Panel (50%) -->
+                    <div class="map-panel">
+                        <!-- Map Container -->
+                        <div id="map" class="map-container" role="region" aria-label="Property map"></div>
+
+                        <!-- Map Controls Overlay -->
+                        <div class="map-controls-overlay">
+                            <button class="map-control-btn" id="recenter-map"
+                                    aria-label="Recenter map" title="Recenter map">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                            <button class="map-control-btn" id="toggle-clusters"
+                                    aria-label="Toggle marker clusters" title="Toggle clusters">
+                                <i class="fas fa-layer-group"></i>
+                            </button>
+                        </div>
+
+                        <!-- Map Stats Badge -->
+                        <div class="map-stats-badge">
+                            <span id="visible-count">0</span> visible properties
+                        </div>
+
+                        <!-- Map Loading State -->
+                        <div class="map-loading" id="map-loading" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>Loading map...</p>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Listings Panel (50%) -->
+                    <div class="listings-panel">
+                        <div class="listings-panel-header">
+                            <p class="results-count" id="results-count">Loading...</p>
+                            <button class="btn-secondary btn-small" id="reset-filters">
+                                <i class="fas fa-redo"></i>
+                                Reset View
+                            </button>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div class="loading-state" id="loading-state">
+                            <div class="spinner"></div>
+                            <p>Loading listings...</p>
+                        </div>
+
+                        <!-- Error State -->
+                        <div class="error-state" id="error-state" style="display: none;">
+                            <p class="error-message" id="error-message"></p>
+                            <button class="btn-secondary" id="retry-button">Retry</button>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="empty-state" id="empty-state" style="display: none;">
+                            <h3>No properties in this area</h3>
+                            <p>Try zooming out or adjusting your filters</p>
+                            <button class="btn-secondary" id="clear-filters-empty">Clear Filters</button>
+                        </div>
+
+                        <!-- Listings Grid (2-Column) -->
+                        <div class="listings-grid-map-view" id="listings-grid">
+                            <!-- Listing cards will be inserted here -->
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination" id="pagination" style="display: none;">
+                            <button class="btn-secondary btn-small" id="prev-page" disabled>Previous</button>
+                            <div class="page-info" id="page-info">Page 1 of 1</div>
+                            <button class="btn-secondary btn-small" id="next-page" disabled>Next</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Property Detail Modal -->
+    <div class="modal" id="property-modal" style="display: none;">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div id="modal-body">
+                <!-- Property details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle
+        function toggleMobileSidebar() {
+            const overlay = document.getElementById('mobile-sidebar-overlay');
+            const sidebar = document.getElementById('mobile-sidebar');
+
+            overlay.classList.toggle('hidden');
+            sidebar.classList.toggle('hidden');
+
+            // Toggle transform
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.add('-translate-x-full');
+            } else {
+                setTimeout(() => {
+                    sidebar.classList.remove('-translate-x-full');
+                }, 10);
+            }
+        }
+
+        // Settings dropdown toggle
+        function toggleSettings() {
+            const dropdown = document.getElementById('settings-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('settings-dropdown');
+            const settingsButton = event.target.closest('[onclick*="toggleSettings"]');
+
+            if (!dropdown.contains(event.target) && !settingsButton && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Update mobile stats
+        async function updateMobileStats() {
+            try {
+                const response = await fetch('/api/loopnet/stats');
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('total-listings-mobile').textContent =
+                        `${result.stats.totalListings.toLocaleString()} Listings`;
+                }
+            } catch (error) {
+                console.error('Error loading mobile stats:', error);
+            }
+        }
+        updateMobileStats();
+    </script>
+    <!-- Leaflet Map JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="listings.js"></script>
+</body>
+</html>

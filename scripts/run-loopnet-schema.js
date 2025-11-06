@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SUPABASE_URL = 'https://your_supabase_project_ref_here.supabase.co';
-const SUPABASE_KEY = 'your_supabase_key_here';
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 

@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-11-06T15:40:55.530Z",
+  "config": {
+    "batchSize": 500,
+    "limit": "10",
+    "offset": 0,
+    "dryRun": false,
+    "verbose": true
+  },
+  "statistics": {
+    "total": 10,
+    "processed": 10,
+    "updated": 10,
+    "skipped": 0,
+    "errors": [],
+    "warnings": [],
+    "startTime": 1762443650454
+  },
+  "fieldStats": {
+    "title": {
+      "found": 9,
+      "missing": 1
+    },
+    "address": {
+      "found": 0,
+      "missing": 10
+    },
+    "property_type": {
+      "found": 9,
+      "missing": 1
+    },
+    "price": {
+      "found": 7,
+      "missing": 3
+    },
+    "broker_name": {
+      "found": 9,
+      "missing": 1
+    }
+  },
+  "duration": 5.077
+}

@@ -1,0 +1,351 @@
+{
+  "logo": null,
+  "links": null,
+  "title": "Topeka Blvd - 711 SW",
+  "units": null,
+  "broker": {
+    "name": "Mark Rezac",
+    "phone": "785-228-5308",
+    "company": "Kansas Commercial Real Estate Services, Inc.",
+    "tagLine": "Mark specializes in Retail.",
+    "location": "Topeka, KS",
+    "contactId": 2128597,
+    "isPremium": true,
+    "companyLogo": "https://images1.loopnet.com/i2/8YjvBVnPzs4yr7A2LeO-1AystzaCQdDHdYcXjSB_byo/116/image.jpg"
+  },
+  "spaces": null,
+  "tenant": null,
+  "zoning": {
+    "zoningCode": "PUD, C-3"
+  },
+  "address": "711 SW Topeka Blvd",
+  "summary": null,
+  "carousel": [
+    {
+      "url": "https://images1.loopnet.com/i2/rAKOSKtHu21vk3fl8TkNgJMURI00D2PdsEH3W35OOEM/116/image.jpg",
+      "type": "image",
+      "caption": "Aerial Photo",
+      "thumbnail": null
+    }
+  ],
+  "location": "in Topeka, KS",
+  "ownerUrl": null,
+  "subtitle": "0.26 Acres of Commercial Land Offered at $95K",
+  "adPackage": null,
+  "amenities": null,
+  "ctnNumber": "785-228-5308",
+  "listingId": 10794955,
+  "utilities": null,
+  "highlights": [
+    "Currently an asphalt parking lot",
+    "Adjoining lot for sale too - contact agent",
+    "One block from Kansas State Capitol"
+  ],
+  "properties": null,
+  "attachments": [
+    {
+      "url": "https://images1.loopnet.com/d2/V1CYyJ_75AIhNQuPDZeNRPWuQuaO2vtaSF9KCoKLEXA/document.pdf",
+      "description": "TopekaBlvd_711_SW_Land_InfoSheet",
+      "attachmentType": "Marketing Brochure/Flyer",
+      "attachmentTypeId": 8,
+      "isMarketBrochure": true
+    }
+  ],
+  "countryCode": "US",
+  "description": "Asphalt parking lot accommodates approximately 32+/- parking spaces. Curb cut, right-in/right-out, approved by City for office use. \nLot is located on S. Topeka Blvd., one block from Kansas State Capitol grounds. High traffic area within walking distance to office buildings, retail, restaurants and shopping. Adjoining asphalt parking lot available for sale. Retail usage would require re-zoning. Contact agent for details.",
+  "listingType": "land for sale",
+  "ownerDetail": null,
+  "saleSummary": {
+    "apn": null,
+    "lots": [
+      {
+        "name": "Lot",
+        "size": "0.26 AC",
+        "price": "$95K",
+        "description": "Asphalt parking lot",
+        "pricePerUnit": "$367.8K"
+      }
+    ],
+    "price": "$95K",
+    "title": "Topeka Blvd - 711 SW",
+    "rating": null,
+    "auction": null,
+    "capRate": null,
+    "headers": {},
+    "lotSize": "0.26 AC",
+    "tenancy": null,
+    "corridor": null,
+    "saleType": null,
+    "unitSize": null,
+    "createdAt": "2017-11-29T12:00:00-05:00",
+    "yearBuilt": null,
+    "yearOneNOI": null,
+    "buildingFAR": null,
+    "lastUpdated": "9/9/2025",
+    "avgOccupancy": null,
+    "buildingSize": null,
+    "numberOfBeds": null,
+    "numberOfLots": null,
+    "parkingRatio": null,
+    "portfolioKey": null,
+    "propertyType": "Land",
+    "buildingClass": null,
+    "businessValue": null,
+    "numberOfRooms": null,
+    "numberOfUnits": null,
+    "percentLeased": null,
+    "yearRenovated": null,
+    "apartmentStyle": null,
+    "numberOfCondos": null,
+    "propertyTypeId": 3,
+    "saleConditions": null,
+    "saleStatusCode": 1,
+    "commissionSplit": null,
+    "landProposedUse": "Retail, Parking Lot",
+    "numberOfStories": null,
+    "opportunityZone": true,
+    "propertyUseType": null,
+    "propGroupSubType": null,
+    "propertySubtypes": [
+      "Commercial"
+    ],
+    "slabToSlabHeight": null,
+    "typicalFloorSize": null,
+    "grossLeasableArea": null,
+    "parkingSpaceCount": null,
+    "pricePerAreaLabel": "Price Per ",
+    "pricePerSizeLabel": null,
+    "pricePerSizeValue": null,
+    "zoningDescription": "PUD, C-3",
+    "clearCeilingHeight": null,
+    "constructionStatus": "Existing",
+    "netLeaseInvestment": null,
+    "pricePerSquareFoot": null,
+    "grossRentMultiplier": null,
+    "numberDockHighDoors": null,
+    "propertyOnGroundLease": null,
+    "noDriveInGradeLevelDoors": null
+  },
+  "submarketId": 2373,
+  "unitMixInfo": null,
+  "demographics": null,
+  "leaseSummary": {
+    "apn": null,
+    "taxes": null,
+    "title": null,
+    "rating": null,
+    "headers": null,
+    "lotSize": null,
+    "parking": null,
+    "createdAt": null,
+    "leaseTerm": null,
+    "yearBuilt": null,
+    "leaseNotes": null,
+    "rentalRate": null,
+    "buildToSuit": null,
+    "lastUpdated": null,
+    "nnnExpenses": null,
+    "crossStreets": null,
+    "minDivisible": null,
+    "parkingRatio": null,
+    "propertyType": null,
+    "anchorTenants": null,
+    "buildingClass": null,
+    "columnSpacing": null,
+    "maxContiguous": null,
+    "numberStories": null,
+    "yearRenovated": null,
+    "apartmentStyle": null,
+    "landProposedUse": null,
+    "propertyTypeKey": null,
+    "propertySubtypes": null,
+    "slabToSlabHeight": null,
+    "typicalFloorArea": null,
+    "grossLeasableArea": null,
+    "operatingExpenses": null,
+    "parkingSpaceCount": null,
+    "totalBuildingSize": null,
+    "zoningDescription": null,
+    "constructionStatus": null,
+    "shoppingCenterType": null,
+    "totalSpaceAvailable": null,
+    "propertyGroupSubType": null,
+    "shoppingCenterFrontages": null,
+    "procurementFeePercentage": null,
+    "shoppingCenterStoresCount": null,
+    "shoppingCenterPropertiesCount": null
+  },
+  "otherListings": null,
+  "propertyFacts": {
+    "price": "$95K",
+    "frontage": [
+      " on Topeka Blvd"
+    ],
+    "saleType": "Investment or Owner User",
+    "landAcres": "0.26 AC",
+    "propertyType": "Land",
+    "propertySubtype": "Commercial"
+  },
+  "propertyTaxes": {
+    "parcelNumber": "109-31-0-20-32-013-000",
+    "landAssessment": "",
+    "totalAssessment": "",
+    "improvementsAssessment": ""
+  },
+  "brokersDetails": [
+    {
+      "cc": "USA",
+      "sc": "KS",
+      "city": "Topeka",
+      "name": "Mark Rezac",
+      "email": "mark@kscommercial.com",
+      "phone": "785-228-5308",
+      "title": "President and Managing Partner",
+      "roleId": 11,
+      "company": "Kansas Commercial Real Estate Services, Inc.",
+      "tagLine": "Mark specializes in Retail.",
+      "location": "Topeka, KS",
+      "contactId": 2128597,
+      "isPremium": true,
+      "phoneInfo": {
+        "phoneNumber": "7852285308",
+        "phoneCountryCode": "USA",
+        "phoneNationalPrefix": "1"
+      },
+      "brokerImage": "https://images1.loopnet.com/i2/mSAQneV3nLXq5dgqIUvLLeEjIJuCyhkjXFsa576UCEI/116/image.jpg",
+      "companyLogo": "https://images1.loopnet.com/i2/8YjvBVnPzs4yr7A2LeO-1AystzaCQdDHdYcXjSB_byo/116/image.jpg",
+      "listingPhone": "7852285308",
+      "isPowerBroker": false,
+      "phoneCountryCode": "USA",
+      "companyLocationId": 239791,
+      "isCoStarSubscriber": true
+    }
+  ],
+  "sustainability": null,
+  "transportation": [
+    {
+      "name": "Topeka Amtrak Station",
+      "stops": [
+        {
+          "dist": {
+            "Raw": 1.07,
+            "Code": "[mi_i]",
+            "Value": "1.1",
+            "Display": "1.1 mi"
+          },
+          "name": "Topeka Amtrak Station",
+          "walk": {
+            "Raw": 20,
+            "Code": "min",
+            "Value": "20",
+            "Display": "20 min"
+          },
+          "drive": {
+            "Raw": 2,
+            "Code": "min",
+            "Value": "2",
+            "Display": "2 min"
+          },
+          "logos": [
+            "http://ahprd1cdn.csgpimgs.com/i2/fLxzPfJ1BPQ8Fa6BEAIyDo1p0Pd8kB_yxi55r2q_44A/1/image.png"
+          ]
+        }
+      ],
+      "transitType": "Commuter Rail"
+    },
+    {
+      "name": "Lawrence Amtrak Station",
+      "stops": [
+        {
+          "dist": {
+            "Raw": 27.48,
+            "Code": "[mi_i]",
+            "Value": "27.5",
+            "Display": "27.5 mi"
+          },
+          "name": "Lawrence Amtrak Station",
+          "walk": {
+            "Raw": 528,
+            "Code": "min",
+            "Value": "528",
+            "Display": "528 min"
+          },
+          "drive": {
+            "Raw": 32,
+            "Code": "min",
+            "Value": "32",
+            "Display": "32 min"
+          },
+          "logos": [
+            "http://ahprd1cdn.csgpimgs.com/i2/fLxzPfJ1BPQ8Fa6BEAIyDo1p0Pd8kB_yxi55r2q_44A/1/image.png"
+          ]
+        }
+      ],
+      "transitType": "Commuter Rail"
+    },
+    {
+      "name": "Tulsa Port Of Catoosa",
+      "stops": [
+        {
+          "dist": {
+            "Raw": 225.99,
+            "Code": "[mi_i]",
+            "Value": "226.0",
+            "Display": "226.0 mi"
+          },
+          "name": "Tulsa Port Of Catoosa",
+          "walk": {
+            "Raw": 4227,
+            "Code": "min",
+            "Value": "4227",
+            "Display": "4227 min"
+          },
+          "drive": {
+            "Raw": 277,
+            "Code": "min",
+            "Value": "277",
+            "Display": "277 min"
+          }
+        }
+      ],
+      "transitType": "Freight Port"
+    },
+    {
+      "name": "CARGIL ELEVATORS-TOPEKA-KS",
+      "stops": [
+        {
+          "dist": {
+            "Raw": 1.77,
+            "Code": "[mi_i]",
+            "Value": "1.8",
+            "Display": "1.8 mi"
+          },
+          "name": "CARGIL ELEVATORS-TOPEKA-KS",
+          "walk": {
+            "Raw": 33,
+            "Code": "min",
+            "Value": "33",
+            "Display": "33 min"
+          },
+          "drive": {
+            "Raw": 4,
+            "Code": "min",
+            "Value": "4",
+            "Display": "4 min"
+          }
+        }
+      ],
+      "transitType": "RailRoad"
+    }
+  ],
+  "architectDetail": null,
+  "nearbyAmenities": null,
+  "nearbyHospitals": null,
+  "portfolioSummary": null,
+  "propertyGroupPins": null,
+  "secureAttachments": null,
+  "finAndTaxSummaries": null,
+  "requestTrafficData": null,
+  "nearbyMajorRetailers": null,
+  "industrialDemographics": null
+}
