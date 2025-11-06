@@ -1,17 +1,18 @@
-/* ===== Split Screen Layout ===== */
+/* ===== Split Screen Layout - FULL HEIGHT ===== */
 .split-screen-container {
     display: flex;
-    height: calc(100vh - 160px); /* Subtract header heights */
+    height: 100%; /* Fill parent container */
     gap: 0;
     position: relative;
 }
 
-/* ===== Map Panel (Left Half) ===== */
+/* ===== Map Panel (Left Half) - FULL HEIGHT ===== */
 .map-panel {
     flex: 0 0 50%;
     position: relative;
     background: var(--background);
     border-right: 2px solid var(--border);
+    height: 100%;
 }
 
 .map-container {
@@ -21,10 +22,11 @@
     z-index: 1;
 }
 
-/* Leaflet Map Overrides (Zillow-inspired) */
+/* Leaflet Map Overrides - Modern Professional Style */
 .leaflet-container {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-size: 14px;
+    height: 100% !important;
 }
 
 .leaflet-popup-content-wrapper {
@@ -44,7 +46,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Map Controls Overlay (Zillow-inspired) */
+/* Map Controls Overlay - Professional Style */
 .map-controls-overlay {
     position: absolute;
     top: 20px;
@@ -82,12 +84,12 @@
 }
 
 .map-control-btn.active {
-    background: #1976d2;
+    background: #3b82f6;
     color: white;
-    border-color: #1976d2;
+    border-color: #3b82f6;
 }
 
-/* Map Stats Badge (Zillow-inspired) */
+/* Map Stats Badge - Blue Theme */
 .map-stats-badge {
     position: absolute;
     bottom: 20px;
@@ -105,7 +107,7 @@
 }
 
 .map-stats-badge span {
-    color: #d32f2f;
+    color: #3b82f6;
 }
 
 /* Map Loading State */
@@ -126,13 +128,14 @@
     margin: 0 auto 15px;
 }
 
-/* ===== Listings Panel (Right Half) ===== */
+/* ===== Listings Panel (Right Half) - FULL HEIGHT ===== */
 .listings-panel {
     flex: 0 0 50%;
     display: flex;
     flex-direction: column;
     background: var(--background);
     overflow: hidden;
+    height: 100%;
 }
 
 .listings-panel-header {
@@ -146,10 +149,10 @@
 }
 
 .listings-grid-map-view {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
     overflow-y: auto;
     flex: 1;
     max-height: 100%;
@@ -179,59 +182,76 @@
     background: var(--secondary-color);
 }
 
-/* ===== Custom Marker Styles (Zillow-inspired) ===== */
+/* ===== Custom Marker Styles - CIRCULAR WITH ICONS ===== */
 .custom-marker-icon {
-    background: #d32f2f;
-    border: 2px solid white;
-    border-radius: 4px;
-    padding: 5px 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background: #3b82f6;
+    border: 3px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 3px 12px rgba(59, 130, 246, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 12px;
-    transition: all 0.2s;
-    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
+    z-index: 500;
+    position: absolute;
+    margin-left: -20px;
+    margin-top: -40px;
 }
 
-.custom-marker-icon span {
+.custom-marker-icon svg {
     display: block;
-    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
-/* Marker States (Zillow-inspired) */
+/* ===== Marker States - CIRCULAR ICONS ===== */
+
+/* Hover State - Elevated & Darker Blue */
 .marker-hovered {
-    background: #c62828 !important;
-    transform: scale(1.2);
+    background: #2563eb !important;
+    transform: scale(1.25) translateY(-3px);
     z-index: 1000 !important;
-    box-shadow: 0 4px 16px rgba(211, 47, 47, 0.7);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.7);
+    border-width: 4px;
 }
 
+/* Selected State - Dark Blue with Persistent Highlight */
 .marker-selected {
-    background: #1976d2 !important;
+    background: #1e40af !important;
     transform: scale(1.15);
     z-index: 999 !important;
     border-color: white;
+    border-width: 4px;
+    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.8);
 }
 
-/* Remove pulse animation for cleaner look */
+/* Active/Click State */
+.custom-marker-icon:active {
+    transform: scale(0.9);
+}
 
-/* Cluster Marker Styles (Zillow-inspired) */
+/* Marker Focus for Accessibility */
+.custom-marker-icon:focus-visible {
+    outline: 3px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+/* ===== Cluster Marker Styles - DISABLED BY DEFAULT ===== */
+/* These remain for potential future use if clustering is re-enabled */
 .marker-cluster-small,
 .marker-cluster-medium,
 .marker-cluster-large {
-    background-color: rgba(211, 47, 47, 0.15);
-    border: 3px solid #d32f2f;
+    background-color: rgba(59, 130, 246, 0.15);
+    border: 3px solid #3b82f6;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .marker-cluster-small div,
 .marker-cluster-medium div,
 .marker-cluster-large div {
-    background-color: #d32f2f;
+    background-color: #3b82f6;
     color: white;
     font-weight: 700;
     font-size: 13px;
@@ -240,115 +260,170 @@
 .marker-cluster-small:hover,
 .marker-cluster-medium:hover,
 .marker-cluster-large:hover {
-    background-color: rgba(198, 40, 40, 0.2);
-    border-color: #c62828;
+    background-color: rgba(37, 99, 235, 0.2);
+    border-color: #2563eb;
 }
 
 .marker-cluster-small:hover div,
 .marker-cluster-medium:hover div,
 .marker-cluster-large:hover div {
-    background-color: #c62828;
+    background-color: #2563eb;
 }
 
 /* ===== Listing Card for Sidebar ===== */
 .listing-card {
-    border-bottom: 1px solid var(--border);
-    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0;
     cursor: pointer;
     transition: all 0.3s;
     background: white;
+    overflow: hidden;
+    min-height: 540px;
 }
 
 .listing-card:hover {
-    background: #f8fafc;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
 }
 
 .listing-card-compact {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
+    height: 100%;
 }
 
 .listing-card-image {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 16 / 12;
     position: relative;
     overflow: hidden;
-    border-radius: 8px;
 }
 
 .listing-card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.listing-card:hover .listing-card-image img {
+    transform: scale(1.05);
 }
 
 .listing-card-price-badge {
     position: absolute;
-    bottom: 8px;
-    left: 8px;
-    background: var(--primary-color);
+    bottom: 12px;
+    left: 12px;
+    background: #3b82f6;
     color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
     font-weight: 700;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
 }
 
-.listing-card-content {
+/* Top Section - Title and Info */
+.listing-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+}
+
+.listing-card-top-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.listing-card-address {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.listing-card-price {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.listing-card-top-right {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+}
+
+.listing-card-size-type {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.listing-card-full-location {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+/* Bottom Section - 1/3 Details + 2/3 Description */
+.listing-card-bottom {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    padding: 16px 20px 20px 20px;
+}
+
+.listing-card-details-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.listing-card-title {
-    font-size: 15px;
-    font-weight: 600;
+.listing-detail-item {
+    font-size: 14px;
+    font-weight: 500;
     color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.listing-card-description {
+    display: flex;
+    align-items: flex-start;
+}
+
+.listing-card-description p {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.7;
     margin: 0;
-    line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.listing-card-location {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--text-secondary);
-    font-size: 13px;
-}
-
-.listing-card-details {
-    display: flex;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--text-secondary);
-}
-
-.listing-card-detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.listing-card-detail-label {
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
 /* ===== Listing Card States (for Map Integration) ===== */
 .listing-card.highlighted {
-    background: rgba(37, 99, 235, 0.08);
-    border-right: 4px solid var(--primary-color);
+    background: rgba(59, 130, 246, 0.08);
+    border: 2px solid #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .listing-card.selected {
-    background: rgba(16, 185, 129, 0.08);
-    border-right: 4px solid #10b981;
+    background: rgba(30, 64, 175, 0.08);
+    border: 2px solid #1e40af;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
 }
 
 /* Scroll into view animation */
@@ -357,7 +432,7 @@
         background: var(--surface);
     }
     50% {
-        background: rgba(37, 99, 235, 0.1);
+        background: rgba(59, 130, 246, 0.15);
     }
 }
 
@@ -373,7 +448,7 @@
     background: var(--surface);
 }
 
-/* ===== Marker Popup Custom Styles (Zillow-inspired) ===== */
+/* ===== Marker Popup Custom Styles - BLUE THEME ===== */
 .marker-popup {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
@@ -401,7 +476,7 @@
 .marker-popup-price {
     font-size: 18px;
     font-weight: 700;
-    color: #d32f2f;
+    color: #3b82f6;
     margin: 8px 0;
 }
 
@@ -417,7 +492,7 @@
 .marker-popup button {
     width: 100%;
     padding: 10px;
-    background: #1976d2;
+    background: #3b82f6;
     color: white;
     border: none;
     border-radius: 8px;
@@ -429,9 +504,9 @@
 }
 
 .marker-popup button:hover {
-    background: #1565c0;
+    background: #2563eb;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 /* ===== Responsive Breakpoints ===== */
@@ -456,6 +531,8 @@
 
     .listings-grid-map-view {
         grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 12px;
     }
 }
 
@@ -478,9 +555,9 @@
     }
 
     .listings-grid-map-view {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 16px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 12px;
     }
 
     .map-controls-overlay {
@@ -511,6 +588,16 @@
     .listings-panel-header .results-count {
         text-align: center;
     }
+
+    .custom-marker-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .custom-marker-icon svg {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 /* Very Small Mobile (< 480px) */
@@ -525,7 +612,7 @@
 /* Focus states for keyboard navigation */
 .map-control-btn:focus,
 .listing-card:focus {
-    outline: 3px solid var(--primary-color);
+    outline: 3px solid #3b82f6;
     outline-offset: 2px;
 }
 
@@ -544,6 +631,10 @@
     .scroll-highlight {
         animation: none;
     }
+
+    .listing-card-image img {
+        transition: none;
+    }
 }
 
 /* High contrast mode */
@@ -555,6 +646,39 @@
     .listing-card.highlighted {
         border-width: 4px;
     }
+
+    .custom-marker-icon {
+        border-width: 3px;
+    }
+}
+
+/* ===== State Tooltip Styling ===== */
+.state-tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #3b82f6;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.state-tooltip::before {
+    border-top-color: #3b82f6 !important;
+}
+
+/* Remove focus outline from map elements */
+.leaflet-container,
+.leaflet-container svg,
+.leaflet-container path,
+.leaflet-interactive {
+    outline: none !important;
+}
+
+.leaflet-container:focus,
+.leaflet-interactive:focus {
+    outline: none !important;
 }
 
 /* ===== Print Styles ===== */
