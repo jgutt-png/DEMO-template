@@ -22,6 +22,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Census API routes
+const censusRoutes = require('./backend/src/routes/census');
+app.use('/api/census', censusRoutes);
+
 // Helper function to execute curl commands
 async function executeCurl(command) {
   try {
