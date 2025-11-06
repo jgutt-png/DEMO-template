@@ -12,7 +12,9 @@ A modern property data aggregation dashboard that integrates multiple APIs to pr
 - **Tax Assessment**: Displays tax assessment information
 - **Financial Data**: Includes home equity and mortgage information
 - **Foreclosure Data**: Shows any foreclosure details if available
-- **Local Storage**: Caches search results for faster access
+- **Cloud Storage**: Automatically saves searches to Supabase database
+- **Search History**: View and reload your recent property searches
+- **Cross-Device Sync**: Access your search history from any device
 
 ## APIs Integrated
 
@@ -30,6 +32,11 @@ A modern property data aggregation dashboard that integrates multiple APIs to pr
    - Home Equity
    - Foreclosure Details
 
+4. **Supabase Database**
+   - Cloud PostgreSQL database
+   - Stores search history and results
+   - Real-time data synchronization
+
 ## Installation
 
 1. Navigate to the project directory:
@@ -41,6 +48,21 @@ A modern property data aggregation dashboard that integrates multiple APIs to pr
    ```bash
    npm install
    ```
+
+3. **Setup Supabase Database** (Required):
+
+   Before running the app, you must create the database tables:
+
+   a. Go to Supabase SQL Editor:
+      https://supabase.com/dashboard/project/your_supabase_project_ref_here/sql
+
+   b. Click "New Query"
+
+   c. Copy and paste the contents of `supabase-schema.sql`
+
+   d. Click "Run"
+
+   See `SETUP_DATABASE.md` for detailed instructions.
 
 ## Running the Application
 
@@ -61,6 +83,7 @@ A modern property data aggregation dashboard that integrates multiple APIs to pr
 3. The dashboard will:
    - Validate the address with Google
    - Fetch data from all APIs simultaneously
+   - **Automatically save the search to Supabase**
    - Display organized results in multiple tabs
 4. Navigate between tabs to view different data categories:
    - **Property Details**: Basic property information
@@ -68,6 +91,10 @@ A modern property data aggregation dashboard that integrates multiple APIs to pr
    - **Valuation**: AVM estimates and value ranges
    - **Financial**: Tax, equity, and mortgage data
    - **Raw Data**: Complete JSON response from all APIs
+5. **View Search History**:
+   - Click "View Recent Searches" to see your last 10 searches
+   - Click any previous search to instantly reload its data
+   - No need to re-fetch from APIs - instant loading!
 
 ## Architecture
 

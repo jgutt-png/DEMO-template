@@ -3,6 +3,8 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const { supabase } = require('./supabase-config');
+const { saveAllPropertyData, getCompletePropertyData, getSearchHistory } = require('./database-helpers');
 
 const execAsync = promisify(exec);
 
@@ -13,6 +15,7 @@ const PORT = 3000;
 const GOOGLE_API_KEY = 'your_google_api_key_here';
 const ZONEOMICS_API_KEY = 'your_zoneomics_api_key_here';
 const ATTOM_API_KEY = 'your_attom_api_key_here';
+const LOOPNET_API_KEY = '9e05046019mshd408c82bdc33c54p1c845fjsn997415e8f471';
 
 app.use(cors());
 app.use(express.json());
@@ -31,6 +34,109 @@ async function executeCurl(command) {
     throw error;
   }
 }
+
+// Helper function for LoopNet API requests
+async function loopNetRequest(endpoint, data) {
+  const url = `https://loopnet-api.p.rapidapi.com/loopnet${endpoint}`;
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-rapidapi-host': 'loopnet-api.p.rapidapi.com',
+      'x-rapidapi-key': LOOPNET_API_KEY
+    },
+    body: JSON.stringify(data)
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('LoopNet API error:', error);
+    throw error;
+  }
+}
+
+// ===== LOOPNET API ENDPOINTS =====
+
+// 9. LoopNet - Find City
+app.post('/api/loopnet/find-city', async (req, res) => {
+  try {
+    const { keywords } = req.body;
+    const result = await loopNetRequest('/helper/findCity', { keywords });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 10. LoopNet - Search by Coordinates
+app.post('/api/loopnet/search-by-coordinates', async (req, res) => {
+  try {
+    const { lat, lon, radius, type } = req.body; // type: 'sale' or 'lease'
+    const endpoint = type === 'lease' ? '/lease/searchByCoordination' : '/sale/searchByCoordination';
+    const data = { lat, lon };
+    if (radius) data.radius = radius;
+
+    const result = await loopNetRequest(endpoint, data);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 11. LoopNet - Search by City
+app.post('/api/loopnet/search-by-city', async (req, res) => {
+  try {
+    const { cityId, limit, type } = req.body; // type: 'sale' or 'lease'
+    const endpoint = type === 'lease' ? '/lease/searchByCity' : '/sale/searchByCity';
+    const data = { cityId };
+    if (limit) data.limit = limit;
+
+    const result = await loopNetRequest(endpoint, data);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 12. LoopNet - Get Property Details
+app.post('/api/loopnet/property-details', async (req, res) => {
+  try {
+    const { listingId, type } = req.body; // type: 'sale', 'lease', or 'auction'
+    let endpoint;
+
+    switch(type) {
+      case 'lease':
+        endpoint = '/property/leaseDetails';
+        break;
+      case 'auction':
+        endpoint = '/property/auctionDetails';
+        break;
+      default:
+        endpoint = '/property/saleDetails';
+    }
+
+    const result = await loopNetRequest(endpoint, { listingId });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 13. LoopNet - Advanced Sale Search
+app.post('/api/loopnet/advanced-search', async (req, res) => {
+  try {
+    const { filters } = req.body;
+    const result = await loopNetRequest('/sale/advanceSearch', filters);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ===== END LOOPNET ENDPOINTS =====
 
 // 1. Google Address Validation API
 app.post('/api/validate-address', async (req, res) => {
@@ -211,8 +317,8 @@ app.post('/api/property/search', async (req, res) => {
       ? `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${geocode.latitude},${geocode.longitude}&fov=90&pitch=0&key=${GOOGLE_API_KEY}`
       : null;
 
-    // Return aggregated data
-    res.json({
+    // Prepare aggregated data
+    const aggregatedData = {
       address: {
         original: address,
         formatted: formattedAddress,
@@ -230,7 +336,22 @@ app.post('/api/property/search', async (req, res) => {
       taxAssessment: taxData.status === 'fulfilled' ? taxData.value : { error: taxData.reason },
       homeEquity: equityData.status === 'fulfilled' ? equityData.value : { error: equityData.reason },
       foreclosure: foreclosureData.status === 'fulfilled' ? foreclosureData.value : { error: foreclosureData.reason }
-    });
+    };
+
+    // Save to normalized database tables
+    try {
+      const addressId = await saveAllPropertyData(aggregatedData, 'DEMO');
+      console.log(`✓ Saved property data to database (address_id: ${addressId})`);
+
+      // Add address_id to response
+      aggregatedData.address_id = addressId;
+    } catch (dbError) {
+      console.error('Database save error:', dbError);
+      // Don't fail the request if database save fails
+    }
+
+    // Return aggregated data
+    res.json(aggregatedData);
 
   } catch (error) {
     console.error('Search error:', error);
@@ -238,7 +359,90 @@ app.post('/api/property/search', async (req, res) => {
   }
 });
 
+// Supabase endpoints for database operations
+
+// Save property search to database
+app.post('/api/property/save', async (req, res) => {
+  try {
+    const { address, formatted_address, latitude, longitude, property_data } = req.body;
+
+    const { data, error } = await supabase
+      .from('property_searches')
+      .insert([
+        {
+          address,
+          formatted_address,
+          latitude,
+          longitude,
+          property_data,
+          user_id: 'DEMO'
+        }
+      ])
+      .select();
+
+    if (error) throw error;
+
+    res.json({ success: true, data: data[0] });
+  } catch (error) {
+    console.error('Save error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get search history
+app.get('/api/property/history', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const userId = req.query.user_id || 'DEMO';
+
+    const data = await getSearchHistory(userId, limit);
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('History error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get specific search by ID
+app.get('/api/property/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get complete property data from normalized tables
+    const data = await getCompletePropertyData(id);
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Get property error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Search properties by address
+app.get('/api/property/search-history', async (req, res) => {
+  try {
+    const { address } = req.query;
+    const userId = req.query.user_id || 'DEMO';
+
+    const { data, error } = await supabase
+      .from('property_searches')
+      .select('*')
+      .eq('user_id', userId)
+      .ilike('address', `%${address}%`)
+      .order('search_timestamp', { ascending: false });
+
+    if (error) throw error;
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error('Search history error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Property Dashboard API running on http://localhost:${PORT}`);
   console.log(`📊 Frontend: http://localhost:${PORT}`);
+  console.log(`💾 Database: Connected to Supabase`);
 });
