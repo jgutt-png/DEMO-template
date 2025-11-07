@@ -606,7 +606,7 @@ function displaySearchHistory(searches) {
                             <i class="fas fa-clock mr-1"></i>${date}
                         </p>
                     </div>
-                    <div class="text-purple-600">
+                    <div style="color: #0a2d5f;">
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>

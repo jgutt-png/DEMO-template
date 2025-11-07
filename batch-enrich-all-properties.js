@@ -10,7 +10,7 @@ const supabase = createClient(
 // Configuration
 const CONFIG = {
   BATCH_SIZE: 50,                    // Properties per batch
-  DELAY_BETWEEN_BATCHES: 2000,       // 2 seconds between batches
+  DELAY_BETWEEN_BATCHES: 500,        // 500ms between batches (OPTIMIZED: was 2000ms)
   DAILY_API_LIMIT: 50000,            // Census API daily limit
   CALLS_PER_PROPERTY: 3,             // tract + block + county calls
   MAX_RETRIES: 3,                    // Retry failed properties

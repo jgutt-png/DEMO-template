@@ -398,7 +398,7 @@ function createMarkerPopup(listing) {
                     </svg>
                     ${location}
                 </p>
-                <button onclick="scrollToListing('${listing.listing_id}')">
+                <button onclick="loadPropertyDetails('${listing.listing_id}', '${listing.state_id}')">
                     View Details
                 </button>
             </div>
@@ -1166,12 +1166,55 @@ function clearFilters() {
     loadListings();
 }
 
+// ===== Skeleton Loading =====
+function createSkeletonCard() {
+    return `
+        <div class="skeleton-card">
+            <div class="skeleton-card-compact">
+                <div class="skeleton-top">
+                    <div style="flex: 1;">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line subtitle"></div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line subtitle"></div>
+                    </div>
+                </div>
+                <div class="skeleton-image"></div>
+                <div class="skeleton-bottom">
+                    <div>
+                        <div class="skeleton-line small"></div>
+                        <div class="skeleton-line small"></div>
+                        <div class="skeleton-line small"></div>
+                        <div class="skeleton-line small"></div>
+                    </div>
+                    <div>
+                        <div class="skeleton-line text"></div>
+                        <div class="skeleton-line text"></div>
+                        <div class="skeleton-line text"></div>
+                        <div class="skeleton-line text" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showSkeletonLoaders(count = 6) {
+    elements.listingsGrid.style.display = 'grid';
+    elements.listingsGrid.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        elements.listingsGrid.innerHTML += createSkeletonCard();
+    }
+}
+
 // ===== State Management =====
 function showLoading() {
-    elements.loadingState.style.display = 'block';
+    elements.loadingState.style.display = 'none';
     elements.errorState.style.display = 'none';
     elements.emptyState.style.display = 'none';
-    elements.listingsGrid.style.display = 'none';
+    showSkeletonLoaders(6);
     elements.pagination.classList.remove('visible');
     elements.pagination.style.opacity = '0';
 }
