@@ -590,9 +590,9 @@ async function drawStateBoundary(selectedStateCode) {
                 const isSelected = stateCode === selectedStateCode;
 
                 if (isSelected) {
-                    // Selected state always shows blue border
+                    // Selected state shows sidebar gradient blue border
                     return {
-                        color: '#3b82f6',
+                        color: '#3d6ba8',
                         weight: 3,
                         opacity: 1,
                         fillColor: 'transparent',
@@ -619,10 +619,10 @@ async function drawStateBoundary(selectedStateCode) {
                     if (!isSelected) {
                         layer.on('mouseover', function(e) {
                             e.target.setStyle({
-                                color: '#3b82f6',           // Blue outline
+                                color: '#3d6ba8',           // Sidebar gradient blue outline
                                 weight: 3,
                                 opacity: 1,
-                                fillColor: '#3b82f6',
+                                fillColor: '#3d6ba8',
                                 fillOpacity: 0.12
                             });
                         });

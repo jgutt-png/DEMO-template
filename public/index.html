@@ -3,62 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1784 | Property Search</title>
+    <title>1784 | Deal Search</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .card-shadow {
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        }
-
-        .card-shadow-lg {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .spinner {
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .metric-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-    </style>
+    <!-- Leaflet Map Dependencies -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="listings-style.css">
+    <link rel="stylesheet" href="map-styles.css">
 </head>
 <body class="h-full">
     <div>
@@ -76,23 +32,23 @@
                         <li>
                             <ul role="list" class="-mx-2 space-y-1">
                                 <li>
-                                    <a href="/listings.html" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0 text-gray-300">
+                                    <a href="/" class="bg-white/10 text-white hover:bg-white/20 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0">
                                             <path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/>
                                         </svg>
                                         Deal Search
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/" class="bg-white/10 text-white hover:bg-white/20 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0">
+                                    <a href="/property-search.html" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0 text-gray-300">
                                             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 15.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
                                         </svg>
                                         Property Search
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="loadSearchHistory(); return false;" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                    <a href="#" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
                                         <i class="fas fa-history text-gray-300 w-6 h-6 shrink-0 flex items-center justify-center"></i>
                                         Search History
                                     </a>
@@ -164,23 +120,23 @@
                         <li>
                             <ul role="list" class="-mx-2 space-y-1">
                                 <li>
-                                    <a href="/listings.html" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0 text-gray-300">
+                                    <a href="/" class="bg-white/10 text-white hover:bg-white/20 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0">
                                             <path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/>
                                         </svg>
                                         Deal Search
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/" class="bg-white/10 text-white hover:bg-white/20 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0">
+                                    <a href="/property-search.html" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 shrink-0 text-gray-300">
                                             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 15.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
                                         </svg>
                                         Property Search
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="loadSearchHistory(); return false;" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
+                                    <a href="#" class="text-gray-300 hover:bg-white/10 group flex items-center gap-x-3 rounded-md p-2 text-sm font-semibold">
                                         <i class="fas fa-history text-gray-300 w-6 h-6 shrink-0 flex items-center justify-center"></i>
                                         Search History
                                     </a>
@@ -286,245 +242,208 @@
                 <span class="sr-only">Open sidebar</span>
                 <i class="fas fa-bars text-xl"></i>
             </button>
-            <div class="flex-1 text-sm font-semibold text-gray-900">Property Search</div>
-            <a href="#">
-                <span class="sr-only">Your profile</span>
-                <img src="https://demo-bucket-1784-holdings.s3.us-east-2.amazonaws.com/Profile+Photo2.png" alt="Demo User" class="h-8 w-8 shrink-0 rounded-full object-cover">
-            </a>
+            <div class="flex-1 text-sm font-semibold text-gray-900">Deal Search</div>
+            <div class="text-sm text-gray-500">
+                <span class="stat-item" id="total-listings-mobile">Loading...</span>
+            </div>
         </div>
 
         <!-- Main content -->
         <main class="lg:pl-[248px]">
-            <!-- Header -->
-            <header class="gradient-bg text-white shadow-lg">
-                <div class="px-4 py-6 sm:px-6 lg:px-8">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-building text-3xl"></i>
-                            <div>
-                                <h1 class="text-2xl font-bold">Property Intelligence</h1>
-                                <p class="text-sm text-purple-200">Comprehensive Property Data & Analytics</p>
+            <!-- Filters as Header -->
+            <header class="filters-header-bar">
+                <div class="filters-header-container">
+                    <!-- Primary filters -->
+                    <div class="filters-header-primary">
+                        <div class="filter-inline">
+                            <input type="text" id="search-input"
+                                   placeholder="Search properties..."
+                                   class="filter-input-inline">
+                        </div>
+                        <div class="filter-inline">
+                            <select id="property-type" class="filter-select-inline">
+                                <option value="">All Types</option>
+                            </select>
+                        </div>
+                        <div class="filter-inline">
+                            <select id="city" class="filter-select-inline">
+                                <option value="">All Cities</option>
+                            </select>
+                        </div>
+                        <div class="filter-inline">
+                            <select id="state" class="filter-select-inline">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Secondary filters -->
+                    <div class="filters-header-secondary">
+                        <button class="btn-secondary btn-small" id="toggle-advanced-filters">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 5h10M3 10h6M3 15h8"/>
+                            </svg>
+                            More Filters
+                        </button>
+                        <div class="header-stats-inline">
+                            <span class="stat-item" id="total-listings">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters Panel -->
+                <div class="filters-advanced-panel" id="advanced-filters" style="display: none;">
+                    <div class="filters-advanced-grid">
+                        <!-- Price Range -->
+                        <div class="filter-group-inline">
+                            <label>Price Range</label>
+                            <div class="range-inputs-inline">
+                                <input type="number" id="price-min" placeholder="Min" class="filter-input-small">
+                                <span>-</span>
+                                <input type="number" id="price-max" placeholder="Max" class="filter-input-small">
                             </div>
                         </div>
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm text-purple-200">Demo Dashboard</p>
+
+                        <!-- Building Size -->
+                        <div class="filter-group-inline">
+                            <label>Building Size (SF)</label>
+                            <div class="range-inputs-inline">
+                                <input type="number" id="building-size-min" placeholder="Min" class="filter-input-small">
+                                <span>-</span>
+                                <input type="number" id="building-size-max" placeholder="Max" class="filter-input-small">
+                            </div>
+                        </div>
+
+                        <!-- Lot Size -->
+                        <div class="filter-group-inline">
+                            <label>Lot Size (SF)</label>
+                            <div class="range-inputs-inline">
+                                <input type="number" id="lot-size-min" placeholder="Min" class="filter-input-small">
+                                <span>-</span>
+                                <input type="number" id="lot-size-max" placeholder="Max" class="filter-input-small">
+                            </div>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="filter-group-inline">
+                            <label>Sort By</label>
+                            <select id="sort-by" class="filter-select">
+                                <option value="last_updated">Last Updated</option>
+                                <option value="price">Price</option>
+                                <option value="building_size">Building Size</option>
+                                <option value="lot_size">Lot Size</option>
+                                <option value="city">City</option>
+                                <option value="title">Title</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort Order -->
+                        <div class="filter-group-inline">
+                            <label>Order</label>
+                            <select id="sort-order" class="filter-select">
+                                <option value="desc">Descending</option>
+                                <option value="asc">Ascending</option>
+                            </select>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="filter-actions">
+                            <button class="btn-primary btn-small" id="apply-filters">Apply</button>
+                            <button class="btn-secondary btn-small" id="clear-filters">Clear</button>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Search Section -->
-            <div class="px-4 py-8 sm:px-6 lg:px-8">
-                <div class="max-w-4xl mx-auto">
-                    <div class="bg-white rounded-lg card-shadow-lg p-6">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">
-                            <i class="fas fa-search text-purple-600 mr-2"></i>Search Property
-                        </h2>
-                        <div class="flex gap-4">
-                            <div class="flex-1">
-                                <input
-                                    type="text"
-                                    id="addressInput"
-                                    placeholder="Enter address (e.g., 4706 New Horizons Blvd Appleton, WI 54914)"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
-                                    onkeypress="if(event.key === 'Enter') searchProperty()"
-                                >
-                            </div>
-                            <button
-                                onclick="searchProperty()"
-                                class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-semibold transition duration-200 flex items-center space-x-2"
-                            >
-                                <i class="fas fa-search"></i>
-                                <span>Search</span>
+            <div class="main-content">
+                <!-- Split Screen Container -->
+                <div class="split-screen-container">
+
+                    <!-- LEFT: Map Panel (50%) -->
+                    <div class="map-panel">
+                        <!-- Map Container -->
+                        <div id="map" class="map-container" role="region" aria-label="Property map"></div>
+
+                        <!-- Map Controls Overlay -->
+                        <div class="map-controls-overlay">
+                            <button class="map-control-btn" id="recenter-map"
+                                    aria-label="Recenter map" title="Recenter map">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                            <button class="map-control-btn" id="toggle-clusters"
+                                    aria-label="Toggle marker clusters" title="Toggle clusters">
+                                <i class="fas fa-layer-group"></i>
+                            </button>
+                        </div>
+
+                        <!-- Map Stats Badge -->
+                        <div class="map-stats-badge">
+                            <span id="visible-count">0</span> visible properties
+                        </div>
+
+                        <!-- Map Loading State -->
+                        <div class="map-loading" id="map-loading" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>Loading map...</p>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Listings Panel (50%) -->
+                    <div class="listings-panel">
+                        <div class="listings-panel-header">
+                            <p class="results-count" id="results-count">Loading...</p>
+                            <button class="btn-secondary btn-small" id="reset-filters">
+                                <i class="fas fa-redo"></i>
+                                Reset View
                             </button>
                         </div>
 
                         <!-- Loading State -->
-                        <div id="loadingState" class="hidden mt-6 text-center">
-                            <div class="spinner mx-auto"></div>
-                            <p class="text-gray-600 mt-4">Loading property data...</p>
-                            <p class="text-sm text-gray-500 mt-2">Fetching data from multiple sources</p>
+                        <div class="loading-state" id="loading-state">
+                            <div class="spinner"></div>
+                            <p>Loading listings...</p>
                         </div>
 
                         <!-- Error State -->
-                        <div id="errorState" class="hidden mt-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                            <div class="flex items-start">
-                                <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-3"></i>
-                                <div>
-                                    <h3 class="text-red-800 font-semibold">Error</h3>
-                                    <p id="errorMessage" class="text-red-600 text-sm mt-1"></p>
-                                </div>
-                            </div>
+                        <div class="error-state" id="error-state" style="display: none;">
+                            <p class="error-message" id="error-message"></p>
+                            <button class="btn-secondary" id="retry-button">Retry</button>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div class="empty-state" id="empty-state" style="display: none;">
+                            <h3>No properties in this area</h3>
+                            <p>Try zooming out or adjusting your filters</p>
+                            <button class="btn-secondary" id="clear-filters-empty">Clear Filters</button>
+                        </div>
+
+                        <!-- Listings Grid (2-Column) -->
+                        <div class="listings-grid-map-view" id="listings-grid">
+                            <!-- Listing cards will be inserted here -->
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination" id="pagination" style="display: none;">
+                            <button class="btn-secondary btn-small" id="prev-page" disabled>Previous</button>
+                            <div class="page-info" id="page-info">Page 1 of 1</div>
+                            <button class="btn-secondary btn-small" id="next-page" disabled>Next</button>
                         </div>
                     </div>
 
-                    <!-- Search History -->
-                    <div id="searchHistory" class="mt-6 bg-white rounded-lg card-shadow-lg p-6 hidden">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-semibold text-gray-800">
-                                <i class="fas fa-history text-purple-600 mr-2"></i>Recent Searches
-                            </h2>
-                            <button onclick="toggleHistory()" class="text-sm text-purple-600 hover:text-purple-700">
-                                <i class="fas fa-times mr-1"></i>Hide
-                            </button>
-                        </div>
-                        <div id="historyList" class="space-y-3">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Show History Button -->
-                    <div class="mt-4 text-center">
-                        <button onclick="loadSearchHistory()" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
-                            <i class="fas fa-history mr-1"></i>View Recent Searches
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Results Section -->
-            <div id="resultsSection" class="px-4 pb-12 sm:px-6 lg:px-8 hidden">
-
-                <!-- Zoning Information -->
-                <div class="mb-6 fade-in">
-                    <div class="bg-white rounded-lg card-shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-map-marked-alt text-purple-600 mr-2"></i>
-                            Zoning Information
-                        </h3>
-                        <div id="zoningDetails">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Address & Map -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 fade-in">
-                    <!-- Validated Address with Street View -->
-                    <div class="bg-white rounded-lg card-shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-map-marker-alt text-purple-600 mr-2"></i>
-                            Validated Address
-                        </h3>
-                        <div id="addressDetails" class="space-y-2">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Google Map -->
-                    <div class="bg-white rounded-lg card-shadow p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-map text-purple-600 mr-2"></i>
-                            Map View
-                        </h3>
-                        <div id="mapContainer" style="height: 450px; border-radius: 8px;">
-                            <!-- Map populated by JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Key Metrics -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 fade-in">
-                    <div class="bg-white rounded-lg card-shadow p-6 metric-card">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600 font-medium">AVM Value</p>
-                                <p id="avmValue" class="text-2xl font-bold text-gray-800 mt-1">--</p>
-                            </div>
-                            <div class="bg-green-100 rounded-full p-3">
-                                <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg card-shadow p-6 metric-card">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600 font-medium">Tax Assessment</p>
-                                <p id="taxValue" class="text-2xl font-bold text-gray-800 mt-1">--</p>
-                            </div>
-                            <div class="bg-blue-100 rounded-full p-3">
-                                <i class="fas fa-file-invoice-dollar text-blue-600 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg card-shadow p-6 metric-card">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600 font-medium">Zone Type</p>
-                                <p id="zoneType" class="text-2xl font-bold text-gray-800 mt-1">--</p>
-                            </div>
-                            <div class="bg-purple-100 rounded-full p-3">
-                                <i class="fas fa-map text-purple-600 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg card-shadow p-6 metric-card">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-600 font-medium">Property Type</p>
-                                <p id="propertyType" class="text-2xl font-bold text-gray-800 mt-1">--</p>
-                            </div>
-                            <div class="bg-yellow-100 rounded-full p-3">
-                                <i class="fas fa-home text-yellow-600 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detailed Information Tabs -->
-                <div class="bg-white rounded-lg card-shadow fade-in">
-                    <div class="border-b border-gray-200">
-                        <nav class="flex space-x-4 px-6" aria-label="Tabs">
-                            <button onclick="switchTab('property')" id="tab-property" class="tab-button active border-b-2 border-purple-600 py-4 px-1 text-sm font-medium text-purple-600">
-                                <i class="fas fa-info-circle mr-2"></i>Property Details
-                            </button>
-                            <button onclick="switchTab('valuation')" id="tab-valuation" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                <i class="fas fa-chart-line mr-2"></i>Valuation
-                            </button>
-                            <button onclick="switchTab('financial')" id="tab-financial" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                <i class="fas fa-coins mr-2"></i>Financial
-                            </button>
-                            <button onclick="switchTab('raw')" id="tab-raw" class="tab-button border-b-2 border-transparent py-4 px-1 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                <i class="fas fa-code mr-2"></i>Raw Data
-                            </button>
-                        </nav>
-                    </div>
-
-                    <div class="p-6">
-                        <!-- Property Details Tab -->
-                        <div id="content-property" class="tab-content">
-                            <div id="propertyDetails" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Valuation Tab -->
-                        <div id="content-valuation" class="tab-content hidden">
-                            <div id="valuationDetails" class="space-y-6">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Financial Tab -->
-                        <div id="content-financial" class="tab-content hidden">
-                            <div id="financialDetails" class="space-y-6">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Raw Data Tab -->
-                        <div id="content-raw" class="tab-content hidden">
-                            <div class="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-                                <pre id="rawDataContent" class="text-green-400 text-xs font-mono"></pre>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Property Detail Modal -->
+    <div class="modal" id="property-modal" style="display: none;">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div id="modal-body">
+                <!-- Property details will be inserted here -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -561,7 +480,27 @@
                 dropdown.classList.add('hidden');
             }
         });
+
+        // Update mobile stats
+        async function updateMobileStats() {
+            try {
+                const response = await fetch('/api/loopnet/stats');
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('total-listings-mobile').textContent =
+                        `${result.stats.totalListings.toLocaleString()} Listings`;
+                }
+            } catch (error) {
+                console.error('Error loading mobile stats:', error);
+            }
+        }
+        updateMobileStats();
     </script>
-    <script src="app.js"></script>
+    <!-- Leaflet Map JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="listings.js"></script>
 </body>
 </html>

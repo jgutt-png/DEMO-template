@@ -84,9 +84,10 @@
 }
 
 .map-control-btn.active {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #0a2d5f 0%, #072450 50%, #051b3d 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.08) 100%);
+    background-blend-mode: normal;
     color: white;
-    border-color: #3b82f6;
+    border-color: #0a2d5f;
 }
 
 /* Map Stats Badge - Blue Theme */
@@ -107,7 +108,7 @@
 }
 
 .map-stats-badge span {
-    color: #3b82f6;
+    color: #0a2d5f;
 }
 
 /* Map Loading State */
@@ -184,12 +185,13 @@
 
 /* ===== Custom Marker Styles - CIRCULAR WITH ICONS ===== */
 .custom-marker-icon {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #2e5a94 0%, #1f4980 50%, #0a2d5f 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.12) 100%);
+    background-blend-mode: normal;
     border: 3px solid white;
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    box-shadow: 0 3px 12px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 3px 12px rgba(46, 90, 148, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -210,21 +212,23 @@
 
 /* Hover State - Elevated & Darker Blue */
 .marker-hovered {
-    background: #2563eb !important;
+    background: linear-gradient(135deg, #1f4980 0%, #0a2d5f 50%, #072450 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.15) 100%) !important;
+    background-blend-mode: normal;
     transform: scale(1.25) translateY(-3px);
     z-index: 1000 !important;
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.7);
+    box-shadow: 0 8px 24px rgba(31, 73, 128, 0.7);
     border-width: 4px;
 }
 
 /* Selected State - Dark Blue with Persistent Highlight */
 .marker-selected {
-    background: #1e40af !important;
+    background: linear-gradient(135deg, #0a2d5f 0%, #072450 50%, #051b3d 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.18) 100%) !important;
+    background-blend-mode: normal;
     transform: scale(1.15);
     z-index: 999 !important;
     border-color: white;
     border-width: 4px;
-    box-shadow: 0 6px 20px rgba(30, 64, 175, 0.8);
+    box-shadow: 0 6px 20px rgba(10, 45, 95, 0.8);
 }
 
 /* Active/Click State */
@@ -234,7 +238,7 @@
 
 /* Marker Focus for Accessibility */
 .custom-marker-icon:focus-visible {
-    outline: 3px solid #60a5fa;
+    outline: 3px solid #0a2d5f;
     outline-offset: 2px;
 }
 
@@ -243,15 +247,15 @@
 .marker-cluster-small,
 .marker-cluster-medium,
 .marker-cluster-large {
-    background-color: rgba(59, 130, 246, 0.15);
-    border: 3px solid #3b82f6;
+    background-color: rgba(10, 45, 95, 0.15);
+    border: 3px solid #0a2d5f;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .marker-cluster-small div,
 .marker-cluster-medium div,
 .marker-cluster-large div {
-    background-color: #3b82f6;
+    background: linear-gradient(135deg, #0a2d5f 0%, #072450 50%, #051b3d 100%);
     color: white;
     font-weight: 700;
     font-size: 13px;
@@ -260,14 +264,14 @@
 .marker-cluster-small:hover,
 .marker-cluster-medium:hover,
 .marker-cluster-large:hover {
-    background-color: rgba(37, 99, 235, 0.2);
-    border-color: #2563eb;
+    background-color: rgba(7, 36, 80, 0.2);
+    border-color: #072450;
 }
 
 .marker-cluster-small:hover div,
 .marker-cluster-medium:hover div,
 .marker-cluster-large:hover div {
-    background-color: #2563eb;
+    background: linear-gradient(135deg, #072450 0%, #051b3d 50%, #041532 100%);
 }
 
 /* ===== Listing Card for Sidebar ===== */
@@ -283,8 +287,8 @@
 }
 
 .listing-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    border-color: #0a2d5f;
+    box-shadow: 0 4px 12px rgba(10, 45, 95, 0.15);
     transform: translateY(-2px);
 }
 
@@ -317,7 +321,8 @@
     position: absolute;
     bottom: 12px;
     left: 12px;
-    background: #3b82f6;
+    background: linear-gradient(135deg, #0a2d5f 0%, #072450 50%, #051b3d 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.08) 100%);
+    background-blend-mode: normal;
     color: white;
     padding: 8px 16px;
     border-radius: 8px;
@@ -415,15 +420,15 @@
 
 /* ===== Listing Card States (for Map Integration) ===== */
 .listing-card.highlighted {
-    background: rgba(59, 130, 246, 0.08);
-    border: 2px solid #3b82f6;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    background: rgba(10, 45, 95, 0.08);
+    border: 2px solid #0a2d5f;
+    box-shadow: 0 4px 12px rgba(10, 45, 95, 0.2);
 }
 
 .listing-card.selected {
-    background: rgba(30, 64, 175, 0.08);
-    border: 2px solid #1e40af;
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+    background: rgba(5, 27, 61, 0.08);
+    border: 2px solid #051b3d;
+    box-shadow: 0 4px 12px rgba(5, 27, 61, 0.2);
 }
 
 /* Scroll into view animation */
@@ -432,7 +437,7 @@
         background: var(--surface);
     }
     50% {
-        background: rgba(59, 130, 246, 0.15);
+        background: rgba(10, 45, 95, 0.15);
     }
 }
 
@@ -476,7 +481,7 @@
 .marker-popup-price {
     font-size: 18px;
     font-weight: 700;
-    color: #3b82f6;
+    color: #0a2d5f;
     margin: 8px 0;
 }
 
@@ -492,7 +497,8 @@
 .marker-popup button {
     width: 100%;
     padding: 10px;
-    background: #3b82f6;
+    background: linear-gradient(135deg, #0a2d5f 0%, #072450 50%, #051b3d 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.08) 100%);
+    background-blend-mode: normal;
     color: white;
     border: none;
     border-radius: 8px;
@@ -504,9 +510,10 @@
 }
 
 .marker-popup button:hover {
-    background: #2563eb;
+    background: linear-gradient(135deg, #072450 0%, #051b3d 50%, #041532 100%), linear-gradient(165deg, transparent 60%, rgba(255, 255, 255, 0.12) 100%);
+    background-blend-mode: normal;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 2px 8px rgba(10, 45, 95, 0.3);
 }
 
 /* ===== Responsive Breakpoints ===== */
@@ -612,7 +619,7 @@
 /* Focus states for keyboard navigation */
 .map-control-btn:focus,
 .listing-card:focus {
-    outline: 3px solid #3b82f6;
+    outline: 3px solid #0a2d5f;
     outline-offset: 2px;
 }
 
@@ -655,7 +662,7 @@
 /* ===== State Tooltip Styling ===== */
 .state-tooltip {
     background: rgba(255, 255, 255, 0.95);
-    border: 2px solid #3b82f6;
+    border: 2px solid #0a2d5f;
     border-radius: 6px;
     padding: 6px 12px;
     font-size: 13px;
@@ -665,7 +672,7 @@
 }
 
 .state-tooltip::before {
-    border-top-color: #3b82f6 !important;
+    border-top-color: #0a2d5f !important;
 }
 
 /* Remove focus outline from map elements */
