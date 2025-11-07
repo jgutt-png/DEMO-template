@@ -664,6 +664,13 @@ function toggleHistory() {
 
 // Load last search on page load (from Supabase)
 window.addEventListener('DOMContentLoaded', async () => {
+    // Check if URL parameter requests showing search history
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('showHistory') === 'true') {
+        loadSearchHistory();
+        return;
+    }
+
     try {
         const response = await fetch('/api/property/history?limit=1');
         const result = await response.json();
