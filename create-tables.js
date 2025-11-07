@@ -1,8 +1,9 @@
+require('dotenv').config();
 const https = require('https');
 const fs = require('fs');
 
-const SUPABASE_PROJECT_REF = 'your_supabase_project_ref_here';
-const SUPABASE_ACCESS_TOKEN = 'your_supabase_access_token_here';
+const SUPABASE_PROJECT_REF = process.env.SUPABASE_PROJECT_REF;
+const SUPABASE_ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 
 // Read the SQL file
 const sqlContent = fs.readFileSync('./supabase-normalized-schema.sql', 'utf8');
@@ -25,7 +26,7 @@ async function executeSQL(sql) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${SUPABASE_ACCESS_TOKEN}`,
-        'apikey': 'your_supabase_key_here'
+        'apikey': process.env.SUPABASE_KEY
       }
     };
 
