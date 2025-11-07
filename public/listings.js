@@ -167,6 +167,31 @@ function initializeEventListeners() {
     // Modal close
     elements.modalClose.addEventListener('click', closeModal);
     elements.modalOverlay.addEventListener('click', closeModal);
+
+    // Pagination scroll detection
+    elements.listingsGrid.addEventListener('scroll', () => {
+        const scrollTop = elements.listingsGrid.scrollTop;
+        const scrollHeight = elements.listingsGrid.scrollHeight;
+        const clientHeight = elements.listingsGrid.clientHeight;
+        const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+
+        // Show pagination when scrolled past 70% or near bottom
+        if (scrollPercentage > 0.7 && totalPages > 1) {
+            elements.pagination.classList.add('visible');
+            setTimeout(() => {
+                elements.pagination.style.opacity = '1';
+                elements.pagination.style.pointerEvents = 'auto';
+            }, 10);
+        } else {
+            elements.pagination.style.opacity = '0';
+            elements.pagination.style.pointerEvents = 'none';
+            setTimeout(() => {
+                if (elements.pagination.style.opacity === '0') {
+                    elements.pagination.classList.remove('visible');
+                }
+            }, 300);
+        }
+    });
 }
 
 // ===== Map Initialization =====
@@ -961,7 +986,7 @@ function updatePagination() {
     elements.pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
     elements.prevPage.disabled = currentPage === 1;
     elements.nextPage.disabled = currentPage === totalPages;
-    elements.pagination.style.display = totalPages > 1 ? 'flex' : 'none';
+    // Pagination visibility is now handled by scroll listener
 }
 
 function updateResultsCount() {
@@ -1147,7 +1172,8 @@ function showLoading() {
     elements.errorState.style.display = 'none';
     elements.emptyState.style.display = 'none';
     elements.listingsGrid.style.display = 'none';
-    elements.pagination.style.display = 'none';
+    elements.pagination.classList.remove('visible');
+    elements.pagination.style.opacity = '0';
 }
 
 function showError(message) {
@@ -1155,7 +1181,8 @@ function showError(message) {
     elements.errorState.style.display = 'block';
     elements.emptyState.style.display = 'none';
     elements.listingsGrid.style.display = 'none';
-    elements.pagination.style.display = 'none';
+    elements.pagination.classList.remove('visible');
+    elements.pagination.style.opacity = '0';
     elements.errorMessage.textContent = message;
 }
 
@@ -1164,7 +1191,8 @@ function showEmptyState() {
     elements.errorState.style.display = 'none';
     elements.emptyState.style.display = 'block';
     elements.listingsGrid.style.display = 'none';
-    elements.pagination.style.display = 'none';
+    elements.pagination.classList.remove('visible');
+    elements.pagination.style.opacity = '0';
 }
 
 function hideAllStates() {
