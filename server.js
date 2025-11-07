@@ -22,6 +22,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Census API routes
 const censusRoutes = require('./backend/src/routes/census');
 app.use('/api/census', censusRoutes);
